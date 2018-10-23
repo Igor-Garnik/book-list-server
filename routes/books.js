@@ -11,6 +11,14 @@ router.get('/', (req, res) => {
 
 });
 
+router.get('/search', (req, res) => {
+    let query = { _id: { $in: req.query.id } };
+    Book.find(query, (err, book) => {
+        if (err) throw err;
+        res.send(book);
+    });
+});
+
 router.post('/post', (req, res) => {
     let newBook = new Book(defineBook(req.body));
     newBook.save((err) => {
@@ -20,11 +28,28 @@ router.post('/post', (req, res) => {
 
 });
 
-router.get('/search', (req, res) => {
-    let query = { _id: { $in: req.query.id } };
+router.post('/search', (req, res) => {
+    let query = req.body;
     Book.find(query, (err, book) => {
+        console.log(book);
         if (err) throw err;
         res.send(book);
+    });
+})
+
+router.put('/update', (req, res) => {
+    let newBook = new Book(defineBook(req.body));
+    newBook.update((err) => {
+        if (err) throw err;
+        res.send(newBook);
+    })
+})
+
+router.delete('/delete', function (req, res) {
+    var query = { _id: req.params.id };
+    Book.deleteOne(query, (err) => {
+        if (err) throw err;
+        res.send({ _id: req.params.bookId });
     });
 });
 
